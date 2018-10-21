@@ -2,6 +2,8 @@ package net.dannysdesign.hourslogger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.Currency;
@@ -10,8 +12,26 @@ import java.util.Locale;
 class HLWindow extends JFrame {
     private DefaultComboBoxModel<HLClientObject> clientModel = new DefaultComboBoxModel<>();
     private JComboBox<HLClientObject> clientChooser = new JComboBox<>(clientModel);
+    private JLabel timeLabel = new JLabel("");
     private HLWorkObject workBuffer;
     private HLClientObject clientBuffer;
+
+    private final Thread timeThread = new Thread(() -> {
+        while (true) {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                break;
+            }
+            workBuffer.endTime = Instant.now();
+            workBuffer.calculate();
+            long millis = workBuffer.endTime.toEpochMilli() - workBuffer.startTime.toEpochMilli();
+            timeLabel.setText(String.format("%02d:%02d:%02d (%s%.02f)", millis / 3600000,
+                    (millis / 60000) % 60, (millis / 1000) % 60, Currency.getInstance(Locale.getDefault()).getSymbol(),
+                    workBuffer.payment));
+            repaint();
+        }
+    });
 
     HLWindow() {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -21,17 +41,21 @@ class HLWindow extends JFrame {
     void init() {
         loadFile();
 
-        for (HLClientObject c : HLIOManager.data.clients) {
-            clientModel.addElement(c);
-        }
+        getContentPane().setPreferredSize(new Dimension(500,150));
 
         clientChooser.addItemListener(a -> {
             if (a.getItem() != null) {
                 if (a.getItem() instanceof HLClientObject) {
                     clientBuffer = (HLClientObject) a.getItem();
+                    System.out.println("Changed selection to " + clientBuffer);
                 }
             }
         });
+
+        for (HLClientObject c : HLIOManager.data.clients) {
+            clientModel.addElement(c);
+            System.out.println("Adding " + c);
+        }
 
         JButton startStopButton = new JButton("Start");
         startStopButton.addActionListener(e -> {
@@ -43,11 +67,15 @@ class HLWindow extends JFrame {
                     startStopButton.setActionCommand("stop");
                     startStopButton.setText("Stop");
 
+                    timeThread.start();
+
                     break;
                 }
                 case "stop": {
                     workBuffer.endTime = Instant.now();
                     workBuffer.calculate();
+
+                    timeThread.interrupt();
 
                     workBuffer.description = JOptionPane.showInputDialog(null,
                             "Please describe the work you did. Do not use commas (,).",
@@ -101,6 +129,7 @@ class HLWindow extends JFrame {
         JLabel clientLabel = new JLabel("Clients:");
 
         this.getContentPane().add(addClient);
+        this.getContentPane().add(timeLabel);
         this.getContentPane().add(startStopButton);
         this.getContentPane().add(clientLabel);
         this.getContentPane().add(clientChooser);
@@ -130,7 +159,13 @@ class HLWindow extends JFrame {
                     System.exit(2);
                 }
             } else {
-                HLIOManager.file = f.getSelectedFile();
+                File file;
+                if (!f.getSelectedFile().getName().contains(".csv")) {
+                    file = new File(f.getSelectedFile().getAbsolutePath() + ".csv");
+                } else {
+                    file = f.getSelectedFile();
+                }
+                HLIOManager.file = file;
             }
         } else {
             System.exit(0);

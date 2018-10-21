@@ -19,6 +19,8 @@ Where, a client has their info stored as:
 
     name
     Rate, ${hourly rate}
+    {work... each line is one task}
+    --
 
 Their work done is as a row, for each "Work", stored as,
 
