@@ -18,3 +18,9 @@ Example of a bad pull request:
 
     In changes section:
         (Deleted Main.java)
+
+This project is structured with IntelliJ IDEA; to start working, fork this
+repository, clone it, and then open that resulting folder as a project.
+
+You may have to import the Project Module; if this is the case, go to
+File -> Project Structure -> Modules, and then add hours-logger.iml.
