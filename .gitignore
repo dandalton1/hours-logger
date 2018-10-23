@@ -23,7 +23,7 @@
 hs_err_pid*
 
 # Ignoring .idea
-.idea
+.idea/*.xml
 
 # Ignoring out/ directory
 out
