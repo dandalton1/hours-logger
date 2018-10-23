@@ -5,6 +5,9 @@ An open source logger for hourly work, written in Java.
 Danny's Website Design releases this work under [an MIT License](LICENSE).
 For contributing, please see [CONTRIBUTING](CONTRIBUTING).
 
+This project is to be worked on in IntelliJ IDEA. To import it, simply open the project in IDEA.
+You may have to add `hours-logger.iml` as a module, and, for JAR export, see `.idea/artifacts/HoursLogger.xml`.
+
 # File Formatting
 hours-logger saves output as `.csv` (Comma Seperated Values) files.
 This format is best in our purpose, since we can easily open them in Excel.
