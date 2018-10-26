@@ -30,7 +30,7 @@ class HLWorkInfoCanvas extends JScrollPane {
         getViewport().add(table);
     }
 
-    void reinit(HLClientObject c) {
+    void refresh(HLClientObject c) {
         this.client = c;
 
         tableModel = new DefaultTableModel(new String[]{

@@ -62,7 +62,7 @@ class HLWindow extends JFrame {
             if (a.getItem() != null) {
                 if (a.getItem() instanceof HLClientObject) {
                     clientBuffer = (HLClientObject) a.getItem();
-                    workInfo.reinit(clientBuffer);
+                    workInfo.refresh(clientBuffer);
                     System.out.println("Changed selection to " + clientBuffer);
                 }
             }
@@ -106,7 +106,7 @@ class HLWindow extends JFrame {
                     if (clientBuffer != null) {
                         clientBuffer.workObjects.add(workBuffer);
 
-                        workInfo.reinit(clientBuffer);
+                        workInfo.refresh(clientBuffer);
                     }
 
                     save();
