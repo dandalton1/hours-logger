@@ -38,6 +38,7 @@ class HLWindow extends JFrame {
 
     HLWindow() {
         super();
+        this.setExtendedState(this.getExtendedState() | JFrame.MAXIMIZED_BOTH);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
     }
@@ -66,6 +67,7 @@ class HLWindow extends JFrame {
             }
             repaint();
         });
+        clientChooser.setBounds(0,0, this.getWidth(), 15);
 
         for (HLClientObject c : HLIOManager.data.clients) {
             System.out.println("Adding " + c);
