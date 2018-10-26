@@ -2,7 +2,6 @@ package net.dannysdesign.hourslogger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -48,10 +47,10 @@ class HLWorkInfoCanvas extends JScrollPane {
 
     private void addRow(HLWorkObject workObject) {
         tableModel.addRow(new Object[]{
-                workObject.startTime,
-                workObject.endTime,
+                workObject.humanReadableStartTime(),
+                workObject.humanReadableEndTime(),
                 workObject.description,
-                Currency.getInstance(Locale.getDefault()).getSymbol() + workObject.payment
+                Currency.getInstance(Locale.getDefault()).getSymbol() + String.format("%.02f",workObject.payment)
         });
     }
 }

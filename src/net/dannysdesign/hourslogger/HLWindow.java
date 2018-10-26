@@ -100,6 +100,8 @@ class HLWindow extends JFrame {
 
                     if (clientBuffer != null) {
                         clientBuffer.workObjects.add(workBuffer);
+
+                        workInfo.reinit(clientBuffer);
                     }
 
                     save();
