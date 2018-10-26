@@ -10,6 +10,7 @@ class HLWorkInfoCanvas extends JScrollPane {
     private DefaultTableModel tableModel = new DefaultTableModel(new String[]{
             "Start Time",
             "End Time",
+            "Duration",
             "Description",
             "Payment"
     }, 0);
