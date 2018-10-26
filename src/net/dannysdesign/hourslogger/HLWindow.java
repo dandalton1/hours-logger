@@ -18,7 +18,6 @@ class HLWindow extends JFrame {
     private HLClientObject clientBuffer;
     private HLWorkInfoCanvas workInfo = new HLWorkInfoCanvas();
 
-
     private final Thread timeThread = new Thread(() -> {
         while (true) {
             try {
@@ -43,11 +42,6 @@ class HLWindow extends JFrame {
     }
 
     void init() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            System.err.println("Unable to use System Look and Feel: " + e.getMessage());
-        }
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
@@ -164,6 +158,20 @@ class HLWindow extends JFrame {
         });
         forkButton.setActionCommand("fork");
 
+        JButton removeWork = new JButton("Remove Selected Work");
+        removeWork.addActionListener(e -> {
+            if (e.getActionCommand().equals("rm-work")) {
+                if (workInfo.getSelectedWork() != null) {
+                    removeWork();
+                }
+            } else {
+                System.err.println("Invalid action command on Remove Work button: " + e.getActionCommand());
+            }
+        });
+        removeWork.setActionCommand("rm-work");
+        removeWork.setBackground(new Color(0xA63446));
+        removeWork.setForeground(Color.WHITE);
+
         JLabel clientLabel = new JLabel("Clients:");
         clientLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -173,6 +181,7 @@ class HLWindow extends JFrame {
         buttonPanel.add(addClient);
         buttonPanel.add(startStopButton);
         buttonPanel.add(forkButton);
+        buttonPanel.add(removeWork);
         this.getContentPane().add(workInfo);
         this.getContentPane().add(timeLabel, BorderLayout.CENTER);
         this.getContentPane().add(buttonPanel, BorderLayout.CENTER);
@@ -224,6 +233,21 @@ class HLWindow extends JFrame {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error saving file: " + e.getMessage(),
                     "Error saving file", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void removeWork() {
+        int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to get rid of " +
+                "the current work? This is " + workInfo.getSelectedWork().humanReadableDuration() + " of work, " +
+                "covering " + Currency.getInstance(Locale.getDefault()).getSymbol() + workInfo.getSelectedWork().payment
+                + ".", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (result == JOptionPane.YES_OPTION) {
+            clientBuffer.workObjects.remove(workInfo.getSelectedWork());
+            workInfo.refresh(clientBuffer);
+            repaint();
+            save();
+            JOptionPane.showMessageDialog(this, "Work removed.", "Work removed.",
+                    JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }

@@ -16,16 +16,21 @@ class HLWorkInfoCanvas extends JScrollPane {
     }, 0);
     private JTable table;
 
+    HLWorkObject getSelectedWork() {
+        if (table.getSelectedRowCount() > 0) return (HLWorkObject) client.workObjects.toArray()[table.getSelectedRow()];
+        else return null;
+    }
+
     HLWorkInfoCanvas() {
         init();
     }
 
     private void init() {
         setOpaque(true);
+        setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
         table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        table.setEnabled(false);
 
         getViewport().add(table);
     }
