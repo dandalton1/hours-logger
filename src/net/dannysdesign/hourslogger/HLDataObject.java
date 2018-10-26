@@ -26,7 +26,7 @@ class HLClientObject {
     }
 }
 
-class HLWorkObject {
+class HLWorkObject implements Comparable<HLWorkObject> {
     HLWorkObject() { }
 
     Instant startTime;
@@ -75,5 +75,13 @@ class HLWorkObject {
                 return duration.getSeconds() + "." + (duration.getNano() / 1000000) + " seconds";
             }
         }
+    }
+
+    public String toString() {
+        return humanReadableStartTime();
+    }
+
+    public int compareTo(HLWorkObject workObject) {
+        return startTime.compareTo(workObject.startTime);
     }
 }

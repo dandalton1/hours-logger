@@ -190,12 +190,23 @@ class HLWindow extends JFrame {
         removeClient.setBackground(new Color(0xA63446));
         removeClient.setForeground(Color.WHITE);
 
+        JButton export = new JButton("Export...");
+        export.addActionListener(e -> {
+            if (e.getActionCommand().equals("export")) {
+                if (clientBuffer != null) export();
+            } else {
+                System.err.println("Invalid action command on export button: " + e.getActionCommand());
+            }
+        });
+        export.setActionCommand("export");
+
         JLabel clientLabel = new JLabel("Clients:");
         clientLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        buttonPanel.add(export);
         buttonPanel.add(addClient);
         buttonPanel.add(startStopButton);
         buttonPanel.add(forkButton);
@@ -290,6 +301,35 @@ class HLWindow extends JFrame {
             }
         } else if (clientChooser.getSelectedItem() != null) {
             System.err.println("Currently selected client is a " + clientChooser.getSelectedItem().getClass().getName());
+        }
+    }
+
+    private void export() {
+        JFileChooser f = new JFileChooser();
+        f.setAcceptAllFileFilterUsed(false);
+        f.setFileFilter(new FileNameExtensionFilter("LaTeX Files", "tex"));
+        f.showSaveDialog(this);
+        if (f.getSelectedFile() != null) {
+            if (clientBuffer.workObjects.toArray().length > 0) {
+                File file;
+                if (!f.getSelectedFile().getName().contains(".tex")) {
+                    file = new File(f.getSelectedFile().getAbsolutePath() + ".tex");
+                } else {
+                    file = f.getSelectedFile();
+                }
+                try {
+                    HLWorkObject earliestWorkObject = (HLWorkObject) JOptionPane.showInputDialog(this,
+                            "Choose the earliest job you want to include.", "Choose earliest job",
+                            JOptionPane.QUESTION_MESSAGE, null, clientBuffer.workObjects.toArray(),
+                            clientBuffer.workObjects.toArray()[0]);
+                    HLIOManager.exportLaTeX(file, clientBuffer, earliestWorkObject);
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Exported log could not be saved.",
+                            "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "You need work to export.");
+            }
         }
     }
 }
