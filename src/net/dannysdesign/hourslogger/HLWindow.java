@@ -15,6 +15,12 @@ class HLWindow extends JFrame {
     private JLabel timeLabel = new JLabel("");
     private HLWorkObject workBuffer;
     private HLClientObject clientBuffer;
+    private HLWorkInfoCanvas workInfo = new HLWorkInfoCanvas();
+
+    @Override
+    public void repaint() {
+        System.out.println("Repainting");
+    }
 
     private final Thread timeThread = new Thread(() -> {
         while (true) {
@@ -49,37 +55,23 @@ class HLWindow extends JFrame {
 
         getContentPane().setPreferredSize(new Dimension(500,150));
 
-        JButton showWorkDone = new JButton("Show work done for client");
-        showWorkDone.setEnabled(false);
-        showWorkDone.addActionListener(e -> {
-            if (e.getActionCommand().equals("show-work")) {
-                HLWorkInfoWindow workInfoWindow = new HLWorkInfoWindow(clientBuffer);
-                workInfoWindow.init();
-                workInfoWindow.showWindow();
-            } else {
-                System.err.println("Invalid action command on show work button: ");
-            }
-        });
-        showWorkDone.setActionCommand("show-work");
-
         clientChooser.addItemListener(a -> {
             if (a.getItem() != null) {
                 if (a.getItem() instanceof HLClientObject) {
                     clientBuffer = (HLClientObject) a.getItem();
-                    showWorkDone.setEnabled(true);
+                    workInfo.reinit(clientBuffer);
                     System.out.println("Changed selection to " + clientBuffer);
-                } else {
-                    showWorkDone.setEnabled(false);
                 }
-            } else {
-                showWorkDone.setEnabled(false);
             }
             repaint();
         });
 
         for (HLClientObject c : HLIOManager.data.clients) {
-            clientModel.addElement(c);
             System.out.println("Adding " + c);
+            clientModel.addElement(c);
+        }
+        if (HLIOManager.data.clients.size() > 0) {
+            clientChooser.setSelectedItem(HLIOManager.data.clients.toArray()[HLIOManager.data.clients.size() - 1]);
         }
 
         JButton startStopButton = new JButton("Start");
@@ -155,8 +147,8 @@ class HLWindow extends JFrame {
 
         this.getContentPane().add(addClient);
         this.getContentPane().add(timeLabel);
+        this.getContentPane().add(workInfo);
         this.getContentPane().add(startStopButton);
-        this.getContentPane().add(showWorkDone);
         this.getContentPane().add(clientLabel);
         this.getContentPane().add(clientChooser);
     }
