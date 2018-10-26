@@ -58,7 +58,11 @@ class HLWindow extends JFrame {
                     clientBuffer = (HLClientObject) a.getItem();
                     workInfo.refresh(clientBuffer);
                     System.out.println("Changed selection to " + clientBuffer);
+                } else {
+                    workInfo = new HLWorkInfoCanvas();
                 }
+            } else {
+                workInfo = new HLWorkInfoCanvas();
             }
             repaint();
         });
@@ -172,6 +176,20 @@ class HLWindow extends JFrame {
         removeWork.setBackground(new Color(0xA63446));
         removeWork.setForeground(Color.WHITE);
 
+        JButton removeClient = new JButton("Remove Client");
+        removeClient.addActionListener(e -> {
+            if (e.getActionCommand().equals("rm-client")) {
+                if (clientChooser.getSelectedItem() != null) {
+                    removeClient();
+                }
+            } else {
+                System.err.println("Invalid action command on Remove Client button: " + e.getActionCommand());
+            }
+        });
+        removeClient.setActionCommand("rm-client");
+        removeClient.setBackground(new Color(0xA63446));
+        removeClient.setForeground(Color.WHITE);
+
         JLabel clientLabel = new JLabel("Clients:");
         clientLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -182,6 +200,7 @@ class HLWindow extends JFrame {
         buttonPanel.add(startStopButton);
         buttonPanel.add(forkButton);
         buttonPanel.add(removeWork);
+        buttonPanel.add(removeClient);
         this.getContentPane().add(workInfo);
         this.getContentPane().add(timeLabel, BorderLayout.CENTER);
         this.getContentPane().add(buttonPanel, BorderLayout.CENTER);
@@ -240,7 +259,8 @@ class HLWindow extends JFrame {
         int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to get rid of " +
                 "the current work? This is " + workInfo.getSelectedWork().humanReadableDuration() + " of work, " +
                 "covering " + Currency.getInstance(Locale.getDefault()).getSymbol() + workInfo.getSelectedWork().payment
-                + ".", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                + ". There is no going back if you decide to go through with this.", "Are you sure?",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
             clientBuffer.workObjects.remove(workInfo.getSelectedWork());
             workInfo.refresh(clientBuffer);
@@ -248,6 +268,28 @@ class HLWindow extends JFrame {
             save();
             JOptionPane.showMessageDialog(this, "Work removed.", "Work removed.",
                     JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void removeClient() {
+        if (clientChooser.getSelectedItem() instanceof HLClientObject) {
+            int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to get rid " +
+                            "of the client " + clientBuffer + "? There is no going back if you decide to do this!",
+                    "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if (result == JOptionPane.YES_OPTION) {
+                HLIOManager.data.clients.remove(clientBuffer);
+                if (HLIOManager.data.clients.size() > 0) {
+                    clientChooser.setSelectedItem(HLIOManager.data.clients.toArray()[HLIOManager.data.clients.size() - 1]);
+                } else {
+                    clientChooser.setSelectedItem(null);
+                }
+                repaint();
+                save();
+                JOptionPane.showMessageDialog(this, "Client data removed.", "Client removed.",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } else if (clientChooser.getSelectedItem() != null) {
+            System.err.println("Currently selected client is a " + clientChooser.getSelectedItem().getClass().getName());
         }
     }
 }

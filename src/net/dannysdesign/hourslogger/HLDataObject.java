@@ -57,10 +57,10 @@ class HLWorkObject {
         if (duration.getSeconds() < 1) {
             return (duration.getNano() / 1000000) + "ms";
         } else {
-            if (duration.getSeconds() > 60) {
-                if (duration.getSeconds() > 3600) {
-                    if (duration.getSeconds() > 86400) {
-                        if (duration.getSeconds() > 31536000) {
+            if (duration.getSeconds() > 59) {
+                if (duration.getSeconds() > 3599) {
+                    if (duration.getSeconds() > 86399) {
+                        if (duration.getSeconds() > 31535999) {
                             return String.format("%.03f", duration.getSeconds() / 31536000.) + " years";
                         } else {
                             return String.format("%.03f", duration.getSeconds() / 86400.) + " days";
