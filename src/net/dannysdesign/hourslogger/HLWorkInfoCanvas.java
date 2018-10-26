@@ -35,6 +35,7 @@ class HLWorkInfoCanvas extends JScrollPane {
         tableModel = new DefaultTableModel(new String[]{
                 "Start Time",
                 "End Time",
+                "Duration",
                 "Description",
                 "Payment"
         }, 0);
@@ -49,6 +50,7 @@ class HLWorkInfoCanvas extends JScrollPane {
         tableModel.addRow(new Object[]{
                 workObject.humanReadableStartTime(),
                 workObject.humanReadableEndTime(),
+                workObject.humanReadableDuration(),
                 workObject.description,
                 Currency.getInstance(Locale.getDefault()).getSymbol() + String.format("%.02f",workObject.payment)
         });
