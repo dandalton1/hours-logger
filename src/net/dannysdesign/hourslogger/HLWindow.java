@@ -5,6 +5,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.time.Instant;
 import java.util.Currency;
 import java.util.Locale;
@@ -17,10 +18,6 @@ class HLWindow extends JFrame {
     private HLClientObject clientBuffer;
     private HLWorkInfoCanvas workInfo = new HLWorkInfoCanvas();
 
-    @Override
-    public void repaint() {
-        System.out.println("Repainting");
-    }
 
     private final Thread timeThread = new Thread(() -> {
         while (true) {
@@ -40,6 +37,7 @@ class HLWindow extends JFrame {
     });
 
     HLWindow() {
+        super();
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.PAGE_AXIS));
     }
@@ -51,9 +49,12 @@ class HLWindow extends JFrame {
             System.err.println("Unable to use System Look and Feel: " + e.getMessage());
         }
 
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
+
         loadFile();
 
-        getContentPane().setPreferredSize(new Dimension(500,150));
+        setTitle("Hours Logger");
 
         clientChooser.addItemListener(a -> {
             if (a.getItem() != null) {
@@ -89,6 +90,8 @@ class HLWindow extends JFrame {
                     break;
                 }
                 case "stop": {
+                    timeLabel.setText("");
+
                     workBuffer.endTime = Instant.now();
                     workBuffer.calculate();
 
@@ -145,13 +148,33 @@ class HLWindow extends JFrame {
         });
         addClient.setActionCommand("add-client");
 
-        JLabel clientLabel = new JLabel("Clients:");
+        JButton forkButton = new JButton("Fork me on GitHub!");
+        forkButton.addActionListener(e -> {
+            if (e.getActionCommand().equals("fork")) {
+                if (Desktop.isDesktopSupported()) {
+                    try {
+                        Desktop.getDesktop().browse(new URI("https://github.com/dandalton1/hours-logger"));
+                    } catch (Exception ex) {
+                        System.err.println("Exception while opening GitHub: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+        forkButton.setActionCommand("fork");
 
-        this.getContentPane().add(addClient);
-        this.getContentPane().add(timeLabel);
+        JLabel clientLabel = new JLabel("Clients:");
+        clientLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        buttonPanel.add(addClient);
+        buttonPanel.add(startStopButton);
+        buttonPanel.add(forkButton);
         this.getContentPane().add(workInfo);
-        this.getContentPane().add(startStopButton);
-        this.getContentPane().add(clientLabel);
+        this.getContentPane().add(timeLabel, BorderLayout.CENTER);
+        this.getContentPane().add(buttonPanel, BorderLayout.CENTER);
+        this.getContentPane().add(clientLabel, BorderLayout.CENTER);
         this.getContentPane().add(clientChooser);
     }
 
