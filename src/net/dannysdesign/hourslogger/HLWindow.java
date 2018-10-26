@@ -43,13 +43,32 @@ class HLWindow extends JFrame {
 
         getContentPane().setPreferredSize(new Dimension(500,150));
 
+        JButton showWorkDone = new JButton("Show work done for client");
+        showWorkDone.setEnabled(false);
+        showWorkDone.addActionListener(e -> {
+            if (e.getActionCommand().equals("show-work")) {
+                HLWorkInfoWindow workInfoWindow = new HLWorkInfoWindow(clientBuffer);
+                workInfoWindow.init();
+                workInfoWindow.showWindow();
+            } else {
+                System.err.println("Invalid action command on show work button: ");
+            }
+        });
+        showWorkDone.setActionCommand("show-work");
+
         clientChooser.addItemListener(a -> {
             if (a.getItem() != null) {
                 if (a.getItem() instanceof HLClientObject) {
                     clientBuffer = (HLClientObject) a.getItem();
+                    showWorkDone.setEnabled(true);
                     System.out.println("Changed selection to " + clientBuffer);
+                } else {
+                    showWorkDone.setEnabled(false);
                 }
+            } else {
+                showWorkDone.setEnabled(false);
             }
+            repaint();
         });
 
         for (HLClientObject c : HLIOManager.data.clients) {
@@ -131,6 +150,7 @@ class HLWindow extends JFrame {
         this.getContentPane().add(addClient);
         this.getContentPane().add(timeLabel);
         this.getContentPane().add(startStopButton);
+        this.getContentPane().add(showWorkDone);
         this.getContentPane().add(clientLabel);
         this.getContentPane().add(clientChooser);
     }
