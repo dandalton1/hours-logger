@@ -39,6 +39,12 @@ class HLWindow extends JFrame {
     }
 
     void init() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.err.println("Unable to use System Look and Feel: " + e.getMessage());
+        }
+
         loadFile();
 
         getContentPane().setPreferredSize(new Dimension(500,150));
