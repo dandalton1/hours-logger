@@ -100,7 +100,7 @@ class HLIOManager {
         String clientCountry = JOptionPane.showInputDialog(null, "Please enter the Country of " +
                 clientObject.name + ".");
 
-        String name = JOptionPane.showInputDialog(null, "Please enter your name and surname.");
+        String name = JOptionPane.showInputDialog(null, "Please enter your name or company name.");
         String streetAddress = JOptionPane.showInputDialog(null, "Please enter your street address.");
         String state = JOptionPane.showInputDialog(null, "Please enter your State/Providence.");
         String zip = JOptionPane.showInputDialog(null, "Please enter your ZIP code.");

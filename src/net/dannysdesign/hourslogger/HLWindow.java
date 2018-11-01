@@ -81,6 +81,7 @@ class HLWindow extends JFrame {
                 case "start": {
                     workBuffer = new HLWorkObject();
                     workBuffer.startTime = Instant.now();
+                    workBuffer.parentObject = clientBuffer;
 
                     startStopButton.setActionCommand("stop");
                     startStopButton.setText("Stop");
@@ -289,10 +290,13 @@ class HLWindow extends JFrame {
                     "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
             if (result == JOptionPane.YES_OPTION) {
                 HLIOManager.data.clients.remove(clientBuffer);
+                clientModel.removeElement(clientBuffer);
                 if (HLIOManager.data.clients.size() > 0) {
                     clientChooser.setSelectedItem(HLIOManager.data.clients.toArray()[HLIOManager.data.clients.size() - 1]);
                 } else {
+                    workInfo.removeAll();
                     clientChooser.setSelectedItem(null);
+                    clientBuffer = null;
                 }
                 repaint();
                 save();

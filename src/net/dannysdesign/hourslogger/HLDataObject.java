@@ -33,9 +33,10 @@ class HLWorkObject implements Comparable<HLWorkObject> {
     Instant endTime;
     String description;
     double payment;
+    HLClientObject parentObject;
 
     void calculate() {
-        payment = ((double) duration().toMillis()) / 3600000.;
+        payment = (((double) duration().toMillis()) / 3600000.) * parentObject.rate;
     }
 
     String humanReadableStartTime() {
