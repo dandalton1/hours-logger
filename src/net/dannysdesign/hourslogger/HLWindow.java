@@ -28,9 +28,9 @@ class HLWindow extends JFrame {
             workBuffer.endTime = Instant.now();
             workBuffer.calculate();
             long millis = workBuffer.endTime.toEpochMilli() - workBuffer.startTime.toEpochMilli();
-            timeLabel.setText(String.format("%02d:%02d:%02d (%s%.02f)", millis / 3600000,
+            timeLabel.setText(String.format("%02d:%02d:%02d (%s%s)", millis / 3600000,
                     (millis / 60000) % 60, (millis / 1000) % 60, Currency.getInstance(Locale.getDefault()).getSymbol(),
-                    workBuffer.payment));
+                    workBuffer.humanReadablePayment()));
             repaint();
         }
     });
@@ -49,23 +49,6 @@ class HLWindow extends JFrame {
         loadFile();
 
         setTitle("Hours Logger");
-
-        clientChooser.setMaximumSize(new Dimension(GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getMaximumWindowBounds().width, 50));
-        clientChooser.addItemListener(a -> {
-            if (a.getItem() != null) {
-                if (a.getItem() instanceof HLClientObject) {
-                    clientBuffer = (HLClientObject) a.getItem();
-                    workInfo.refresh(clientBuffer);
-                    System.out.println("Changed selection to " + clientBuffer);
-                } else {
-                    workInfo = new HLWorkInfoCanvas();
-                }
-            } else {
-                workInfo = new HLWorkInfoCanvas();
-            }
-            repaint();
-        });
 
         for (HLClientObject c : HLIOManager.data.clients) {
             System.out.println("Adding " + c);
@@ -123,6 +106,7 @@ class HLWindow extends JFrame {
             }
         });
         startStopButton.setActionCommand("start");
+        startStopButton.setEnabled(false);
 
         JButton addClient = new JButton("Add Client");
         addClient.addActionListener(e -> {
@@ -176,6 +160,7 @@ class HLWindow extends JFrame {
         removeWork.setActionCommand("rm-work");
         removeWork.setBackground(new Color(0xA63446));
         removeWork.setForeground(Color.WHITE);
+        removeWork.setEnabled(false);
 
         JButton removeClient = new JButton("Remove Client");
         removeClient.addActionListener(e -> {
@@ -190,6 +175,7 @@ class HLWindow extends JFrame {
         removeClient.setActionCommand("rm-client");
         removeClient.setBackground(new Color(0xA63446));
         removeClient.setForeground(Color.WHITE);
+        removeClient.setEnabled(false);
 
         JButton export = new JButton("Export...");
         export.addActionListener(e -> {
@@ -200,12 +186,47 @@ class HLWindow extends JFrame {
             }
         });
         export.setActionCommand("export");
+        export.setEnabled(false);
 
         JLabel clientLabel = new JLabel("Clients:");
         clientLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         timeLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         buttonPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        clientChooser.setMaximumSize(new Dimension(GraphicsEnvironment.getLocalGraphicsEnvironment()
+                .getMaximumWindowBounds().width, 50));
+        clientChooser.addItemListener(a -> {
+            if (a.getItem() != null) {
+                if (a.getItem() instanceof HLClientObject) {
+                    clientBuffer = (HLClientObject) a.getItem();
+                    workInfo.refresh(clientBuffer);
+                    startStopButton.setEnabled(true);
+                    removeClient.setEnabled(true);
+                    export.setEnabled(true);
+                    System.out.println("Changed selection to " + clientBuffer);
+                } else {
+                    workInfo = new HLWorkInfoCanvas();
+                    startStopButton.setEnabled(false);
+                    removeClient.setEnabled(false);
+                    export.setEnabled(false);
+                }
+            } else {
+                workInfo = new HLWorkInfoCanvas();
+                startStopButton.setEnabled(false);
+                removeClient.setEnabled(false);
+                export.setEnabled(false);
+            }
+            repaint();
+        });
+
+        workInfo.addListener(o -> {
+            if (o.getIndex() >= 0) {
+                removeWork.setEnabled(true);
+            } else {
+                removeWork.setEnabled(false);
+            }
+        });
 
         buttonPanel.add(export);
         buttonPanel.add(addClient);
@@ -270,9 +291,9 @@ class HLWindow extends JFrame {
     private void removeWork() {
         int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to get rid of " +
                 "the current work? This is " + workInfo.getSelectedWork().humanReadableDuration() + " of work, " +
-                "covering " + Currency.getInstance(Locale.getDefault()).getSymbol() + workInfo.getSelectedWork().payment
-                + ". There is no going back if you decide to go through with this.", "Are you sure?",
-                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+                "covering " + Currency.getInstance(Locale.getDefault()).getSymbol() +
+                workInfo.getSelectedWork().humanReadablePayment() + ". There is no going back if you decide to go" +
+                " through with this.", "Are you sure?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (result == JOptionPane.YES_OPTION) {
             clientBuffer.workObjects.remove(workInfo.getSelectedWork());
             workInfo.refresh(clientBuffer);

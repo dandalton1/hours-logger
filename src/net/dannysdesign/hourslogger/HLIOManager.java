@@ -135,13 +135,13 @@ class HLIOManager {
             }
             w.write(workObject.humanReadableStartTime() + "&" + workObject.humanReadableEndTime() + "&" +
                     workObject.humanReadableDuration() + "&" + LaTeXify(workObject.description) + "&" +
-                    getCurrencySymbolAsRegex() + workObject.payment + "\\\\\n");
+                    getCurrencySymbolAsRegex() + workObject.humanReadablePayment() + "\\\\\n");
             payment += workObject.payment;
         }
 
         w.write("\\end{tabular}\n\\\\\n");
-        w.write("\\\\\n\\\\\nThe total amount owed for the work totals to " + getCurrencySymbolAsRegex() +
-                payment + ". Please, get that to me as soon as you can.\\\\\n");
+        w.write("\\\\\n\\\\\nThe total amount owed totals to " + getCurrencySymbolAsRegex() +
+                String.format("%.02f", payment) + ".\\\\\n");
 
         w.write("\\\\\n");
 

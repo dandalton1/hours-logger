@@ -49,6 +49,10 @@ class HLWorkObject implements Comparable<HLWorkObject> {
         return dateTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
     }
 
+    String humanReadablePayment() {
+        return String.format("%.02f", payment);
+    }
+
     private Duration duration() {
         return Duration.between(startTime, endTime);
     }

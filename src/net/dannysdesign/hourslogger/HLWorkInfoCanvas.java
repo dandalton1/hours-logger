@@ -2,6 +2,7 @@ package net.dannysdesign.hourslogger;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.Locale;
 
@@ -15,6 +16,7 @@ class HLWorkInfoCanvas extends JScrollPane {
             "Payment"
     }, 0);
     private JTable table;
+    private ArrayList<HLWorkInfoCanvasEventListener> eventListeners = new ArrayList<>();
 
     HLWorkObject getSelectedWork() {
         if (table.getSelectedRowCount() > 0) return (HLWorkObject) client.workObjects.toArray()[table.getSelectedRow()];
@@ -31,6 +33,11 @@ class HLWorkInfoCanvas extends JScrollPane {
 
         table = new JTable(tableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getSelectionModel().addListSelectionListener(e -> {
+            for (HLWorkInfoCanvasEventListener l : eventListeners) {
+                l.onChange(new HLWorkInfoCanvasEventObject(e.getFirstIndex()));
+            }
+        });
 
         getViewport().add(table);
     }
@@ -61,4 +68,22 @@ class HLWorkInfoCanvas extends JScrollPane {
                 Currency.getInstance(Locale.getDefault()).getSymbol() + String.format("%.02f",workObject.payment)
         });
     }
+
+    void addListener(HLWorkInfoCanvasEventListener l) {
+        eventListeners.add(l);
+    }
+}
+
+interface HLWorkInfoCanvasEventListener {
+    void onChange(HLWorkInfoCanvasEventObject o);
+}
+
+class HLWorkInfoCanvasEventObject {
+    private int index;
+
+    HLWorkInfoCanvasEventObject(int index) {
+        this.index = index;
+    }
+
+    int getIndex() { return index; }
 }
