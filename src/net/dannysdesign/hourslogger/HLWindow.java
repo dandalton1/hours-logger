@@ -115,18 +115,24 @@ class HLWindow extends JFrame {
                 client.name = JOptionPane.showInputDialog(null,
                         "Please enter the name of the client. Do not use commas (,).", "Please enter name",
                         JOptionPane.INFORMATION_MESSAGE);
-                client.name = client.name.replaceAll(",","");
+                if (client.name != null) {
+                    client.name = client.name.replaceAll(",", "");
 
-                client.rate = Double.parseDouble(JOptionPane.showInputDialog(null,
-                        "Enter an hourly rate for the client. Do not use currency signs.",
-                        "Enter hourly wage", JOptionPane.QUESTION_MESSAGE).replaceAll(HLIOManager.
-                        getCurrencySymbolAsRegex(), ""));
+                    try {
+                        client.rate = Double.parseDouble(JOptionPane.showInputDialog(null,
+                                "Enter an hourly rate for the client. Do not use currency signs.",
+                                "Enter hourly wage", JOptionPane.QUESTION_MESSAGE).replaceAll(HLIOManager.
+                                getCurrencySymbolAsRegex(), ""));
 
-                clientModel.addElement(client);
-                clientModel.setSelectedItem(client);
-                HLIOManager.data.clients.add(client);
+                        clientModel.addElement(client);
+                        clientModel.setSelectedItem(client);
+                        HLIOManager.data.clients.add(client);
 
-                save();
+                        save();
+                    } catch (Exception ex) {
+                        System.out.println("Unable to parse rate: " + ex.getMessage());
+                    }
+                }
             } else {
                 System.err.println("Unknown action command on add client button: " + e.getActionCommand());
             }
