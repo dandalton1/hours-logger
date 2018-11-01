@@ -3,3 +3,8 @@ Start time, End time, Description, Payment
 Example Company
 Rate,$25.00
 --
+
+Example Company
+Rate,$25.00
+2018-11-01T20:37:57.753Z,2018-11-01T20:39:00.271Z,Testing,$0.43
+--
