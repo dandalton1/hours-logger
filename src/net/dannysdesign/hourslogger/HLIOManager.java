@@ -51,7 +51,7 @@ class HLIOManager {
                         throw new HLParseException();
                     }
                 } else {
-                    System.out.println("Client being added: " + clientBuffer.name + "; " + clientBuffer.rate);
+                    System.out.println("Client being added: " + clientBuffer.name + "; Rate: " + clientBuffer.rate);
                     data.clients.add(clientBuffer);
                     clientBuffer = new HLClientObject();
                 }

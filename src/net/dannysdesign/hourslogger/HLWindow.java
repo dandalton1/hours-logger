@@ -50,14 +50,6 @@ class HLWindow extends JFrame {
 
         setTitle("Hours Logger");
 
-        for (HLClientObject c : HLIOManager.data.clients) {
-            System.out.println("Adding " + c);
-            clientModel.addElement(c);
-        }
-        if (HLIOManager.data.clients.size() > 0) {
-            clientChooser.setSelectedItem(HLIOManager.data.clients.toArray()[HLIOManager.data.clients.size() - 1]);
-        }
-
         JButton startStopButton = new JButton("Start");
         startStopButton.addActionListener(e -> {
             switch (e.getActionCommand()) {
@@ -233,6 +225,14 @@ class HLWindow extends JFrame {
                 removeWork.setEnabled(false);
             }
         });
+
+        for (HLClientObject c : HLIOManager.data.clients) {
+            System.out.println("Adding " + c);
+            clientModel.addElement(c);
+        }
+        if (HLIOManager.data.clients.size() > 0) {
+            clientChooser.setSelectedItem(HLIOManager.data.clients.toArray()[HLIOManager.data.clients.size() - 1]);
+        }
 
         buttonPanel.add(export);
         buttonPanel.add(addClient);
