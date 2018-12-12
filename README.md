@@ -27,7 +27,7 @@ Where, a client has their info stored as:
 
 Their work done is as a row, for each "Work", stored as,
 
-    {start time as Java Instant}, {end time as Java Instant}, {description}, ${amount owed}
+    {start time as ISO-8601 Instant}, {end time as ISO-8601 Instant}, {description}, ${amount owed}
 
 # Multi-platform
 
