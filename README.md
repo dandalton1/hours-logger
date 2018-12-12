@@ -32,3 +32,5 @@ Their work done is as a row, for each "Work", stored as,
 # Multi-platform
 
 This should work with any device that can run GUI Java code, including Windows, Mac OS X, and a Linux GUI.
+
+In order to run it, you will need a copy of the Java Runtime Environment. We built this one on Java 8. You may download this specific version at [https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html).
